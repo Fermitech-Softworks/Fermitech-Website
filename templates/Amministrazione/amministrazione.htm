@@ -1,0 +1,59 @@
+{% extends "stampo.htm" %}
+{% block title %}Amministrazione{% endblock %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-3">Pannello Amministrativo del sito</h1>
+    <p class="lead">Attraverso i comandi presenti in questa pagina, è possibile interagire con il database.</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gestione Prodotti</h5>
+                    <p class="card-text">Esegui operazioni sui prodotti attualmente registrati.</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/product_list" class="btn btn-primary btn-block">Lista</a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/product_add" class="btn btn-success btn-block">Aggiungi</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gestione Membri</h5>
+                    <p class="card-text">Esegui operazioni sui membri di Fermitech Softworks.</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/member_list" class="btn btn-primary btn-block">Lista</a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/member_add" class="btn btn-success btn-block">Aggiungi</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gestione Post</h5>
+                    <p class="card-text">Esegui operazioni sui post del sito</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/msg_list" class="btn btn-primary btn-block">Lista</a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/msg_add" class="btn btn-success btn-block">Aggiungi</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+{% endblock %}
