@@ -1,5 +1,25 @@
 {% extends "stampo.htm" %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
-<h1>Questo sito è ancora in costruzione.</h1>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" width="1280" height="300">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img class="d-block w-100" width="1280" height="300" src="{{ url_for('static', filename='Fermitech.png') }}"
+                 alt="First slide">
+            <div class="carousel-caption d-none d-md-block" style="color:white;text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
+                <h5>Benvenuto sul sito di Fermitech Softworks.</a></h5>
+                <p>"Prova"</p>
+            </div>
+        </div>
+        {%for elemento in highlight%}
+        <div class="carousel-item">
+            <img class="d-block w-100" width="1280" height="300" src="static/{{elemento.image}}" alt="{{loop.index+1}}">
+            <div class="carousel-caption d-none d-md-block" >
+                <h5><a href="/product_inspect/{{elemento.pid}}" style="text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF;">{{elemento.nome}}</a></h5>
+                <p style="color:white;text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">{{elemento.descrizione_breve}}</p>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+</div>
 {% endblock %}

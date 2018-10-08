@@ -1,14 +1,15 @@
-from flask import Flask, session, url_for, redirect, request, render_template, abort, flash
+from flask import Flask, session, url_for, redirect, request, render_template, abort, flash, Markup
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import bcrypt
 import os
+import markdown
 
 
 app = Flask(__name__)
 app.secret_key = "debug-attivo"
-UPLOAD_FOLDER = './upload-area'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_FOLDER = './static'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'svg'])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -75,6 +76,10 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def generate_markdown(raw):
+    return Markup(markdown.markdown(raw))
+
+
 def find_user(email):
     return User.query.filter_by(email=email).first()
 
@@ -92,7 +97,9 @@ def page_home():
 def page_main():
     css = url_for("static", filename="style.css")
     user = find_user('username')
-    return render_template("main.htm", user=user, css=css)
+    highlight = Prodotto.query.filter_by(showcase=True).all()
+    print(highlight)
+    return render_template("main.htm", user=user, css=css, highlight=highlight)
 
 
 @app.route('/products')
@@ -100,6 +107,20 @@ def page_products():
     css = url_for("static", filename="style.css")
     products = Prodotto.query.all()
     return render_template("products.htm", css=css)
+
+
+@app.route('/product_inspect/<int:pid>')
+def page_product_inspect(pid):
+    css = url_for("static", filename="style.css")
+    users = User.query.all()
+    prodotto = Prodotto.query.get_or_404(pid)
+    desc, req, lic, down = prodotto.descrizione.split("|")
+    desc = generate_markdown(desc)
+    req = generate_markdown(req)
+    lic = generate_markdown(lic)
+    down = generate_markdown(down)
+    print(desc, req, lic, down)
+    return render_template("product_inspect.htm", user=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic, down=down)
 
 
 @app.route('/members')
@@ -121,6 +142,7 @@ def page_amministrazione():
             return redirect(url_for('page_amministrazione'))
         else:
             abort(403)
+
 
 
 @app.route('/product_add', methods=["POST", "GET"])
