@@ -6,7 +6,7 @@
         <div class="carousel-item active">
             <img class="d-block w-100" width="1280" height="300" src="{{ url_for('static', filename='Fermitech.png') }}"
                  alt="First slide">
-            <div class="carousel-caption d-none d-md-block" style="color:white;text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
+            <div class="carousel-caption d-none d-md-block" style="color:black;text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF;">
                 <h5>Benvenuto sul sito di Fermitech Softworks.</a></h5>
                 <p>"Prova"</p>
             </div>
@@ -16,7 +16,7 @@
             <img class="d-block w-100" width="1280" height="300" src="static/{{elemento.image}}" alt="{{loop.index+1}}">
             <div class="carousel-caption d-none d-md-block" >
                 <h5><a href="/product_inspect/{{elemento.pid}}" style="text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF;">{{elemento.nome}}</a></h5>
-                <p style="color:white;text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">{{elemento.descrizione_breve}}</p>
+                <p style="color:black;text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF;">{{elemento.descrizione_breve}}</p>
             </div>
         </div>
         {%endfor%}

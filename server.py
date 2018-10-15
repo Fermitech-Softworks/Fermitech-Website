@@ -5,7 +5,6 @@ import bcrypt
 import os
 import markdown
 
-
 app = Flask(__name__)
 app.secret_key = "debug-attivo"
 UPLOAD_FOLDER = './static'
@@ -119,8 +118,8 @@ def page_product_inspect(pid):
     req = generate_markdown(req)
     lic = generate_markdown(lic)
     down = generate_markdown(down)
-    print(desc, req, lic, down)
-    return render_template("product_inspect.htm", user=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic, down=down)
+    return render_template("product_inspect.htm", user=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic,
+                           down=down)
 
 
 @app.route('/members')
@@ -144,7 +143,6 @@ def page_amministrazione():
             abort(403)
 
 
-
 @app.route('/product_add', methods=["POST", "GET"])
 def page_product_add():
     if 'username' not in session:
@@ -162,16 +160,47 @@ def page_product_add():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'], request.form['download'], str(file.filename))
+        prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'],
+                            request.form['download'], str(file.filename))
         db.session.add(prodotto)
         db.session.commit()
         return redirect(url_for('page_amministrazione'))
 
 
+@app.route('/prodotti_list')
+def page_prodotti_list():
+    if 'username' not in session:
+        abort(403)
+    utente = find_user(session['username'])
+    prodotti = Prodotto.query.all()
+    css = url_for("static", filename="style.css")
+    return render_template("Amministrazione/Prodotti/prodotti_list.htm", css=css, utente=utente, prodotti=prodotti)
+
+
+@app.route('/prodotto_edit/<int:pid>', methods=["POST", "GET"])
+def page_prodotto_edit(pid):
+    if 'username' not in session:
+        return abort(403)
+    if request.method == 'GET':
+        utente = find_user(session['username'])
+        prodotto = Prodotto.query.get_or_404(pid)
+        css = url_for("static", filename="style.css")
+        return render_template("Amministrazione/Prodotti/product_edit.htm", css=css, utente=utente, prodotto=prodotto)
+    else:
+        prodotto = Prodotto.query.get_or_404(pid)
+        prodotto.nome = request.form['nome']
+        prodotto.descrizione_breve = request.form['dbreve']
+        prodotto.descrizione = request.form['destesa']
+        prodotto.downlink = request.form['download']
+        db.session.commit()
+        return redirect(url_for('page_prodotti_list'))
+
+
 if __name__ == "__main__":
     # Se non esiste il database viene creato
     if not os.path.isfile("db.sqlite"):
-        utente = User("Lorenzo", "Balugani", "Perito Informatico", "Programmatore", "lorenzo.balugani@gmail.com", "password", "Marmelle")
+        utente = User("Lorenzo", "Balugani", "Perito Informatico", "Programmatore", "lorenzo.balugani@gmail.com",
+                      "password", "Marmelle")
         db.create_all()
         db.session.add(utente)
         db.session.commit()

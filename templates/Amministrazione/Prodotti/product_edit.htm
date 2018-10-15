@@ -1,0 +1,32 @@
+{% extends "stampo.htm" %}
+{% block title %}Aggiunta prodotto{% endblock %}
+{% block content %}
+<form action="/prodotto_edit/{{prodotto.pid}}" method="POST">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="nome" class="col-form-label">Nome del prodotto</label>
+            <input type="text" class="form-control" id="nome" placeholder="Qualcosa-one" value="{{prodotto.nome}}"
+                   name="nome">
+        </div>
+        <div class="form-group col-md-9">
+            <label for="dbreve" class="col-form-label">Descrizione breve</label>
+            <input type="text" class="form-control" id="dbreve" placeholder="Un potente software che..."
+                   value="{{prodotto.descrizione_breve}}" name="dbreve">
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="destesa" class="col-form-label">Descrizione estesa</label>
+        <textarea class="form-control" id="destesa" rows="6" name="destesa">{{prodotto.descrizione}}</textarea>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            <label for="download" class="col-form-label">Link per il download</label>
+            <input type="text" class="form-control" id="download" placeholder="https://github.com/"
+                   value="{{prodotto.downlink}}" name="download">
+        </div>
+    </div>
+    <div class="form-group row">
+        <button type="submit" class="btn btn-primary btn-block">Salva</button>
+    </div>
+</form>
+{%endblock%}
