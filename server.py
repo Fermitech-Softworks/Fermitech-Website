@@ -1,4 +1,5 @@
 from flask import Flask, session, url_for, redirect, request, render_template, abort, flash, Markup
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import bcrypt
@@ -45,20 +46,31 @@ class Prodotto(db.Model):
     nome = db.Column(db.String, nullable=False)
     descrizione = db.Column(db.String, nullable=False)
     descrizione_breve = db.Column(db.String, nullable=False)
-    downlink = db.Column(db.String, nullable=False)
     showcase = db.Column(db.Boolean, nullable=False)
     image = db.Column(db.String, nullable=False)
 
-    def __init__(self, nome, descrizione, descrizione_breve, downlink, image):
+    def __init__(self, nome, descrizione, descrizione_breve, image):
         self.nome = nome
         self.descrizione = descrizione
         self.descrizione_breve = descrizione_breve
-        self.downlink = downlink
         self.showcase = False
         self.image = image
 
     def __repr__(self):
         return "{}-{}".format(self.pid, self.nome)
+
+
+class Messaggio(db.Model):
+    mid = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.DateTime, nullable=False)
+    contenuto = db.Column(db.String, nullable=False)
+
+    def __init__(self, data, contenuto):
+        self.data = data
+        self.contenuto = contenuto
+
+    def __repr__(self):
+        return "{}-{}".format(self.mid, self.data)
 
 
 def login(email, password):
@@ -97,8 +109,8 @@ def page_main():
     css = url_for("static", filename="style.css")
     user = find_user('username')
     highlight = Prodotto.query.filter_by(showcase=True).all()
-    print(highlight)
-    return render_template("main.htm", user=user, css=css, highlight=highlight)
+    prodotti = Prodotto.query.all()
+    return render_template("main.htm", user=user, css=css, highlight=highlight, prodotti=prodotti)
 
 
 @app.route('/products')
@@ -160,8 +172,7 @@ def page_product_add():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'],
-                            request.form['download'], str(file.filename))
+        prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'], str(file.filename))
         db.session.add(prodotto)
         db.session.commit()
         return redirect(url_for('page_amministrazione'))
@@ -195,6 +206,20 @@ def page_prodotto_edit(pid):
         db.session.commit()
         return redirect(url_for('page_prodotti_list'))
 
+
+@app.route("/personale_add", methods=["POST", "GET"])
+def page_personale_add():
+    if 'username' not in session:
+        return abort(403)
+    if request.method == 'GET':
+        utente = find_user(session['username'])
+        css = url_for("static", filename="style.css")
+        return render_template("Amministrazione/Personale/personale_add.htm", css=css, utente=utente)
+    else:
+        utente = User(request.form['nome'], request.form['cognome'],request.form['titolo'],request.form['ruolo'], request.form['password'], request.form['email'], request.form['bio'])
+        db.session.add(utente)
+        db.session.commit()
+        return redirect(url_for('page_amministrazione'))
 
 if __name__ == "__main__":
     # Se non esiste il database viene creato
