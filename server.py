@@ -221,6 +221,50 @@ def page_personale_add():
         db.session.commit()
         return redirect(url_for('page_amministrazione'))
 
+
+@app.route("/personale_list")
+def page_personale_list():
+    if 'username' not in session:
+        return abort(403)
+    utente = find_user(session['username'])
+    css = url_for("static", filename="style.css")
+    personale = User.query.all()
+    return render_template("Amministrazione/Personale/personale_list.htm", css=css, utente=utente, personale=personale)
+
+
+@app.route("/personale_del/<int:id>")
+def page_personale_del(id):
+    if 'username' not in session:
+        return abort(403)
+    utente = User.query.get_or_404(id)
+    db.session.delete(utente)
+    db.session.commit()
+    return redirect(url_for("page_personale_list"))
+
+
+@app.route("/personale_edit/<int:id>", methods=["POST","GET"])
+def page_personale_edit(id):
+    if 'username' not in session:
+        return abort(403)
+    if request.method == 'GET':
+        utente = find_user(session['username'])
+        user = User.query.get_or_404(id)
+        css = url_for("static", filename="style.css")
+        return render_template("Amministrazione/Personale/personale_edit.htm", css=css, utente=utente, user=user)
+    user = User.query.get_or_404(id)
+    user.nome = request.form['nome']
+    user.cognome = request.form['cognome']
+    user.titolo = request.form['titolo']
+    user.ruolo = request.form['ruolo']
+    if request.form['password'] != "":
+        p = bytes(request.form['password'], encoding="utf-8")
+        user.password = bcrypt.hashpw(p, bcrypt.gensalt())
+    user.email = request.form['email']
+    user.bio = request.form['bio']
+    db.session.commit()
+    return redirect(url_for("page_personale_list"))
+
+
 if __name__ == "__main__":
     # Se non esiste il database viene creato
     if not os.path.isfile("db.sqlite"):

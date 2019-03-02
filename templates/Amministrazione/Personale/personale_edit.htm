@@ -1,31 +1,31 @@
 {% extends "stampo.htm" %}
-{% block title %}Aggiunta membro{% endblock %}
+{% block title %}Aggiunta prodotto{% endblock %}
 {% block content %}
-<form action="/personale_add" method="POST" enctype=multipart/form-data>
+<form action="/personale_edit/{{user.uid}}" method="POST" enctype=multipart/form-data>
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="nome" class="col-form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" placeholder="" name="nome">
+            <input type="text" class="form-control" id="nome" placeholder="" name="nome" value="{{user.nome}}">
         </div>
         <div class="form-group col-md-6">
             <label for="cognome" class="col-form-label">Descrizione breve</label>
-            <input type="text" class="form-control" id="cognome" placeholder="" name="cognome">
+            <input type="text" class="form-control" id="cognome" placeholder="" name="cognome" value="{{user.cognome}}">
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="titolo" class="col-form-label">Titolo di Studio</label>
-            <input type="text" class="form-control" id="titolo" placeholder="" name="titolo">
+            <input type="text" class="form-control" id="titolo" placeholder="" name="titolo" value="{{user.titolo}}">
         </div>
         <div class="form-group col-md-6">
             <label for="ruolo" class="col-form-label">Ruolo</label>
-            <input type="text" class="form-control" id="ruolo" placeholder="" name="ruolo">
+            <input type="text" class="form-control" id="ruolo" placeholder="" name="ruolo" value="{{user.ruolo}}">
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="email" class="col-form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="" name="email">
+            <input type="email" class="form-control" id="email" placeholder="" name="email" value="{{user.email}}">
         </div>
         <div class="form-group col-md-6">
             <label for="password" class="col-form-label">Password</label>
@@ -34,7 +34,7 @@
     </div>
     <div class="form-row">
         <label for="bio" class="col-form-label">Bio</label>
-        <textarea class="form-control" id="bio" rows="6" name="bio"></textarea>
+        <textarea class="form-control" id="bio" rows="6" name="bio" content="{{user.bio}}"></textarea>
     </div>
     <br>
     <div class="form-group row">

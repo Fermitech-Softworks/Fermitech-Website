@@ -1,0 +1,27 @@
+{% extends "stampo.htm" %}
+{% block title %}Lista personale{% endblock %}
+{% block content %}
+<h3>Lista personale</h3>
+<table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th>Titolo</th>
+            <th>Ruolo</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        {% for persona in personale %}
+            <tr>
+                <td>{{ persona.nome }}</td>
+                <td>{{ persona.cognome }}</td>
+                <td>{{ persona.email }}</td>
+                <td>{{ persona.titolo }}</td>
+                <td>{{ persona.ruolo }}</td>
+                <td><a href="/personale_edit/{{ persona.uid }}"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a href="/personale_del/{{ persona.uid }}"><i class="fa fa-ban" aria-hidden="true"></i></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{%endblock%}
