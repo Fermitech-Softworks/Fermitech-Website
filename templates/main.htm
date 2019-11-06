@@ -42,6 +42,7 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                 <div class="row">
+                    {% set counter=0 %}
                     {% for prodotto in prodotti %}
                     <div class="col-6">
                         <div class="card" style="width: 20rem;">
@@ -49,15 +50,29 @@
                                  alt="Card image cap"
                                  style="margin-left: auto; width: 80%; margin-right: auto; margin-top:auto;">
                             <div class="card-body">
-                                <p class="card-text"><center><a href="/product_inspect/{{prodotto.pid}}">{{prodotto.nome}}</a></center></p>
+                                <p class="card-text">
+                                <center><a href="/product_inspect/{{prodotto.pid}}">{{prodotto.nome}}</a></center>
+                                </p>
                             </div>
                         </div>
                     </div>
+                    {% set counter=counter+1%}
+                    {% if counter is divisibleby 2 %}
+                    <br>
+                    {% endif %}
                     {%endfor%}
                 </div>
             </div>
             <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-
+                {% for utente in team %}
+                <div class="card w-75">
+                    <div class="card-body">
+                        <h5 class="card-title">{{utente.nome}} {{utente.cognome}}</h5>
+                        <p class="card-text">{{utente.titolo}}, {{utente.ruolo}}</p>
+                        <p class="card-text">{{utente.bio}}</p>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
 

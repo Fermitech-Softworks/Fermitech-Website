@@ -6,13 +6,15 @@
         <thead>
         <tr>
             <th>Prodotto</th>
+            <th>Vetrina?</th>
             <th>Azioni</th>
         </tr>
         </thead>
         {% for prodotto in prodotti %}
             <tr>
                 <td>{{ prodotto.nome }}</td>
-                <td><a href="/prodotto_edit/{{ prodotto.pid }}"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a href="/prodotto_del/{{ prodotto.pid }}"><i class="fa fa-ban" aria-hidden="true"></i></a></td>
+                <td>{{ prodotto.showcase }}</td>
+                <td><a href="/prodotto_edit/{{ prodotto.pid }}"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a href="/prodotto_del/{{ prodotto.pid }}"><i class="fa fa-ban" aria-hidden="true"></i></a> <a href="/prodotto_vetrina/{{prodotto.pid}}"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
             </tr>
         {% endfor %}
     </table>

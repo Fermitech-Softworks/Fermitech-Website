@@ -110,7 +110,8 @@ def page_main():
     user = find_user('username')
     highlight = Prodotto.query.filter_by(showcase=True).all()
     prodotti = Prodotto.query.all()
-    return render_template("main.htm", user=user, css=css, highlight=highlight, prodotti=prodotti)
+    team = User.query.all()
+    return render_template("main.htm", user=user, css=css, highlight=highlight, prodotti=prodotti, team=team)
 
 
 @app.route('/products')
@@ -177,6 +178,28 @@ def page_product_add():
         db.session.commit()
         return redirect(url_for('page_amministrazione'))
 
+
+@app.route('/prodotto_del/<int:pid>')
+def page_prodotto_del(pid):
+    if 'username' not in session:
+        return abort(403)
+    prodotto = Prodotto.query.get_or_404(pid)
+    try:
+        os.remove("static/{}".format(prodotto.image))
+    except:
+        pass
+    db.session.delete(prodotto)
+    db.session.commit()
+    return redirect(url_for('page_prodotti_list'))
+
+@app.route('/prodotto_vetrina/<int:pid>')
+def page_prodotto_vetrina(pid):
+    if 'username' not in session:
+        return abort(403)
+    prodotto = Prodotto.query.get_or_404(pid)
+    prodotto.showcase = not prodotto.showcase
+    db.session.commit()
+    return redirect(url_for('page_prodotti_list'))
 
 @app.route('/prodotti_list')
 def page_prodotti_list():
