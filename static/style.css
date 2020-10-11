@@ -1,4 +1,138 @@
-.form-inline {
-    margin-top: auto;
-    margin-bottom: auto;
+.default-navbar {
+    background-color: #424242;
+    padding: 0px 10px;
+    position: relative;
+}
+
+.default-jumbotron h1 {
+    margin-top: 1rem;
+}
+
+.default-jumbotron {
+    padding: 2rem 2rem;
+    margin-bottom: 2rem;
+    background-color: #424242;
+    border-radius: .5rem;
+    box-sizing: inherit;
+    opacity: 1;
+    box-shadow: 10px 10px #bdbdbd;
+    border-bottom-width: 10px;
+    border-bottom-style: solid;
+    border-bottom-color: #ffb74d;
+}
+
+.outlined-jumbotron {
+    padding: 2rem 2rem;
+    margin-bottom: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fafafa;
+    border: 4px solid #424242 !important;
+    border-radius: .5rem;
+    box-sizing: inherit;
+    opacity: 1;
+    box-shadow: 10px 10px #bdbdbd;
+}
+
+.outlined-jumbotron-login {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    margin-bottom: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fafafa;
+    border: 4px solid #424242 !important;
+    border-radius: .5rem;
+    box-sizing: inherit;
+    opacity: 1;
+    box-shadow: 10px 10px #fafafa;
+}
+
+.default-footer {
+    color: #fafafa;
+    background-color: #424242;
+    border-radius: .5rem;
+    box-shadow: 10px 10px #bdbdbd;
+    padding: 2rem 2rem;
+}
+
+.tabs .tab a {
+    background-color: #424242;
+    color: #fafafa;
+}
+
+.tab a.active {
+    color: #424242;
+}
+
+.tab a.selected {
+    color: #424242;
+}
+
+.tabs .tab a:focus,
+.tabs .tab a:focus.active {
+    background-color: transparent;
+    outline: none
+}
+
+.tabs .indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: #424242;
+    will-change: left, right
+}
+
+.tabs .tab a:hover, .tabs .tab a.active {
+    background-color: transparent;
+    color: #424242;
+}
+
+blockquote {
+    margin: 20px 0;
+    padding-left: 1.5rem;
+    border-left: 5px solid #fafafa;
+}
+
+.default-footer .container {
+    width: 100%;
+}
+
+.default-jumbotron-content {
+    opacity: 1;
+    color: #fafafa;
+}
+
+.input-field input:focus + label {
+    color: black !important;
+}
+
+/* label underline focus color */
+.row .input-field input:focus {
+    border-bottom: 1px solid black !important;
+    box-shadow: 0 1px 0 0 black !important;
+    color: black !important;
+}
+
+.btn:hover {
+    background-color: #ffb74d;
+}
+
+.btn {
+    background-color: #424242;
+}
+ .slider .slides {
+    background-color: transparent;
+    margin: 0;
+    height: 400px;
+}
+
+.slider .slides li img {
+    height: 100%;
+    width: 100%;
+    background-position: center;
+    background-size:100% auto;
+    background-repeat: no-repeat;
 }

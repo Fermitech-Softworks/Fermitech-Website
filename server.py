@@ -5,14 +5,20 @@ from werkzeug.utils import secure_filename
 import bcrypt
 import os
 import markdown
+from flask_babel import Babel, gettext
 
 app = Flask(__name__)
+babel = Babel(app)
 app.secret_key = "debug-attivo"
 UPLOAD_FOLDER = './static'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'svg'])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['LANGUAGES'] = {
+    'en' : 'English',
+    'it' : 'Italian'
+}
 db = SQLAlchemy(app)
 app.config.from_object(__name__)
 
@@ -107,11 +113,10 @@ def page_home():
 @app.route('/welcome')
 def page_main():
     css = url_for("static", filename="style.css")
-    user = find_user('username')
     highlight = Prodotto.query.filter_by(showcase=True).all()
     prodotti = Prodotto.query.all()
     team = User.query.all()
-    return render_template("main.htm", user=user, css=css, highlight=highlight, prodotti=prodotti, team=team)
+    return render_template("main.htm", css=css, highlight=highlight, prodotti=prodotti, team=team)
 
 
 @app.route('/products')
@@ -131,7 +136,7 @@ def page_product_inspect(pid):
     req = generate_markdown(req)
     lic = generate_markdown(lic)
     down = generate_markdown(down)
-    return render_template("product_inspect.htm", user=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic,
+    return render_template("product_inspect.htm", users=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic,
                            down=down)
 
 
@@ -149,8 +154,8 @@ def page_amministrazione():
         css = url_for("static", filename="style.css")
         return render_template("Amministrazione/amministrazione.htm", css=css, utente=utente)
     else:
-        if login(request.form['username'], request.form['password']):
-            session['username'] = request.form['username']
+        if login(request.form['email'], request.form['password']):
+            session['username'] = request.form['email']
             return redirect(url_for('page_amministrazione'))
         else:
             abort(403)
@@ -173,6 +178,7 @@ def page_product_add():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        print(request.form.get('dbreve'))
         prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'], str(file.filename))
         db.session.add(prodotto)
         db.session.commit()
@@ -296,4 +302,4 @@ if __name__ == "__main__":
         db.create_all()
         db.session.add(utente)
         db.session.commit()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
