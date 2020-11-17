@@ -1,5 +1,6 @@
 from flask import Flask, session, url_for, redirect, request, render_template, abort, flash, Markup
 import werkzeug
+import werkzeug.middleware.proxy_fix
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
