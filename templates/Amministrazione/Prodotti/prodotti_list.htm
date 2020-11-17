@@ -14,7 +14,7 @@
             <tr>
                 <td>{{ prodotto.nome }}</td>
                 <td>{{ prodotto.showcase }}</td>
-                <td><a href="/prodotto_edit/{{ prodotto.pid }}"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a href="/prodotto_del/{{ prodotto.pid }}"><i class="fa fa-ban" aria-hidden="true"></i></a> <a href="/prodotto_vetrina/{{prodotto.pid}}"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
+                <td><a href="/prodotto_edit/{{ prodotto.pid }}"><i class="material-icons">add</i></a> <a href="/prodotto_del/{{ prodotto.pid }}"><i class="material-icons">delete</i> <a href="/prodotto_vetrina/{{prodotto.pid}}"><i class="material-icons">assistant_photo</i></a></td>
             </tr>
         {% endfor %}
     </table>

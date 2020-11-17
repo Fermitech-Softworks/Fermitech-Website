@@ -1,34 +1,51 @@
 {% extends "stampo.htm" %}
-{% block title %}{{prodotto.nome}}{% endblock %}
+{% block title %}{{ prodotto.nome }}{% endblock %}
+{% block extrahead %}
+    <script>
+        $(document).ready(function () {
+            $('.tabs').tabs();
+        });
+        $(document).ready(function () {
+            let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+            let image = document.getElementById("image")
+            let linkBack = document.getElementById("back")
+            if (isMobile) {
+                image.hidden = true
+                linkBack.href = "{{ url_for("page_phone_home") }}"
+            }
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                image.hidden = true
+                linkBack.href = "{{ url_for("page_phone_home") }}"
+            }
+        });
+    </script>
+{% endblock %}
 {% block content %}
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" width="1280" height="300">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img class="d-block w-100" width="1280" height="300" src="http:\\127.0.0.1:5000\static\{{prodotto.image}}" alt="1">
-            <div class="carousel-caption d-none d-md-block" style="color:white;text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
-                <h5>{{prodotto.nome}}</h5>
-                <p>{{prodotto.descrizione_breve}}</p>
-            </div>
+    <a class="btn btn-block" href="{{ url_for("page_home") }}" style="margin-bottom: 1rem" id="back">{{ gettext("Go back") }}</a>
+    <img src="{{ url_for('static', filename=prodotto.image) }}" id="image">
+    <br>
+    <div class="row">
+    <div class="info-panel">
+        <div class="col s12" style="padding-left:0px; padding-right:0px;">
+            <ul class="tabs">
+                <li class="tab col s3"><a href="#description">{{ gettext("Description") }}</a></li>
+                <li class="tab col s3"><a href="#requirements">{{ gettext("Requirements") }}</a></li>
+                <li class="tab col s3"><a href="#licence">{{ gettext("Licence") }}</a></li>
+                <li class="tab col s3"><a href="#downloads">{{ gettext("Downloads") }}</a></li>
+            </ul>
+        </div>
+        <br>
+        <div class="row" id="description" style="background-color: #fafafa; color: #424242">
+            {{ desc|safe }}
+        </div>
+        <div class="row" id="requirements" style="background-color: #fafafa; color: #424242">
+            {{ req|safe }}
+        </div>
+        <div id="licence" class="row" style="background-color: #fafafa; color: #424242">
+            {{ lic|safe }}
+        </div>
+        <div id="downloads" class="row" style="background-color: #fafafa; color: #424242">
+            {{ down|safe }}
         </div>
     </div>
-</div>
-<br>
-<div class="row">
-  <div class="col-4">
-    <div class="list-group" id="list-tab" role="tablist">
-      <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Descrizione</a>
-      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Requisiti minimi</a>
-      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Licenza</a>
-      <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Downloads</a>
-    </div>
-  </div>
-  <div class="col-8">
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">{{desc|safe}}</div>
-      <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">{{req|safe}}</div>
-      <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">{{lic|safe}}</div>
-      <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">{{down|safe}}</div>
-    </div>
-  </div>
-</div>
-{%endblock%}
+{% endblock %}

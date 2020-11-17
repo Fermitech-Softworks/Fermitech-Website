@@ -10,16 +10,7 @@
         $(document).ready(function () {
             $('.tabs').tabs();
         });
-        $(document).ready(function () {
-            let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
 
-            if (isMobile) {
-                window.location.replace('{{ url_for("page_phone_home") }}')
-            }
-            if (/Mobi|Android/i.test(navigator.userAgent)) {
-                window.location.replace('{{ url_for("page_phone_home") }}')
-            }
-        });
         let lastmid = 0;
 
         function getMore(upper) {
@@ -60,36 +51,19 @@
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.send();
         }
+
     </script>
 {% endblock %}
 {% block content %}
-    <br>
-    <div class="slider">
-        <ul class="slides">
-            <li>
-                <img src="{{ url_for('static', filename='Fermitech.png') }}"> <!-- random image -->
-                <div class="caption center-align">
-                </div>
-            </li>
-            {% for prodotto in highlight %}
-                <li>
-                    <img src="{{ url_for('static', filename='{}'.format(prodotto.image)) }}"> <!-- random image -->
-                    <div class="caption center-align">
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
     <h3>{{ gettext("Welcome,") }}</h3>
     <p class="flow-text">{{ gettext("this is the website of Fermitech-Softworks, a software development organization. In the last years we have developed, for the most part, web-based management software for many different work-cases, from schools to restaurants.") }}</p>
     <div class="row">
         <div class="info-panel">
             <div class="col s12" style="padding-left:0px; padding-right:0px;">
                 <ul class="tabs">
-                    <li class="tab col s3"><a href="#intro">{{ gettext("Blogposts") }}</a></li>
-                    <li class="tab col s3"><a href="#products">{{ gettext("Products") }}</a></li>
-                    <li class="tab col s3"><a href="#personnel">{{ gettext("Personnel") }}</a></li>
-                    <li class="tab col s3" style="background-color: #424242"></li>
+                    <li class="tab col s4"><a href="#intro">{{ gettext("Blogposts") }}</a></li>
+                    <li class="tab col s4"><a href="#products">{{ gettext("Products") }}</a></li>
+                    <li class="tab col s4"><a href="#personnel">{{ gettext("Personnel") }}</a></li>
                 </ul>
             </div>
             <br>
@@ -113,11 +87,11 @@
             </div>
             <div class="row" id="products">
                 <div class="col s12" style="background-color: #424242; color: #fafafa">
-                    {% for prod_row in prodotti | batch(3, '&nbsp;') %}
+                    {% for prod_row in prodotti | batch(1, '&nbsp;') %}
                         <div class="row">
                             {% for prodotto in prod_row %}
                                 {% if prodotto.nome %}
-                                    <div class="col s4" style="margin: auto">
+                                    <div class="col s12" style="margin: auto">
                                         <div class="card small"
                                              style="width: auto; background-color: #fafafa ; color: #424242">
                                             <div class="card-image" style="margin-right: 5px; margin-left: 5px; ">
@@ -160,7 +134,8 @@
             <div class="row">
                 <div class="col l6 s12">
                     <h5 class="white-text">Fermitech softworks</h5>
-                    <p class="grey-text text-lighten-4">{{ gettext("To contact Fermitech Softworks, write to") }} <a href="mailto:info@fermitech.info">info@fermitech.info</a></p>
+                    <p class="grey-text text-lighten-4">{{ gettext("To contact Fermitech Softworks, write to") }} <a
+                            href="mailto:info@fermitech.info">info@fermitech.info</a></p>
                 </div>
                 <div class="col l4 offset-l2 s12">
                     <h5 class="white-text">{{ gettext("Links") }}</h5>
@@ -176,5 +151,4 @@
             </div>
         </div>
     </footer>
-    <br>
 {% endblock %}

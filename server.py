@@ -1,18 +1,26 @@
 from flask import Flask, session, url_for, redirect, request, render_template, abort, flash, Markup
+import werkzeug
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import bcrypt
 import os
 import markdown
+from flask_babel import Babel, gettext
 
 app = Flask(__name__)
-app.secret_key = "debug-attivo"
+babel = Babel(app)
+app.secret_key = os.environ["COOKIE_SECRET_KEY"]
 UPLOAD_FOLDER = './static'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'svg'])
+reverse_proxy_app = werkzeug.middleware.proxy_fix.ProxyFix(app=app, x_for=1, x_proto=0, x_host=1, x_port=0, x_prefix=0)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['LANGUAGES'] = {
+    'en': 'English',
+    'it': 'Italian'
+}
 db = SQLAlchemy(app)
 app.config.from_object(__name__)
 
@@ -91,6 +99,10 @@ def generate_markdown(raw):
     return Markup(markdown.markdown(raw))
 
 
+def generate_date(date):
+    return "{}/{}/{} {}:{}".format(date.day, date.month, date.year, date.hour, date.minute)
+
+
 def find_user(email):
     return User.query.filter_by(email=email).first()
 
@@ -107,11 +119,23 @@ def page_home():
 @app.route('/welcome')
 def page_main():
     css = url_for("static", filename="style.css")
-    user = find_user('username')
     highlight = Prodotto.query.filter_by(showcase=True).all()
+    prodotti = Prodotto.query.order_by(Prodotto.nome.asc()).all()
+    team = User.query.all()
+    latest = Messaggio.query.order_by(Messaggio.mid.desc()).first()
+    return render_template("main.htm", css=css, highlight=highlight, prodotti=prodotti, team=team,
+                           latestDate=latest.data, latestContent=generate_markdown(latest.contenuto),
+                           latestMid=latest.mid)
+
+
+@app.route('/welcome/mobile')
+def page_phone_home():
+    css = url_for("static", filename="style.css")
     prodotti = Prodotto.query.all()
     team = User.query.all()
-    return render_template("main.htm", user=user, css=css, highlight=highlight, prodotti=prodotti, team=team)
+    latest = Messaggio.query.order_by(Messaggio.mid.desc()).first()
+    return render_template("phone_main.htm", css=css, prodotti=prodotti, team=team, latestDate=latest.data,
+                           latestContent=generate_markdown(latest.contenuto), latestMid=latest.mid)
 
 
 @app.route('/products')
@@ -131,8 +155,53 @@ def page_product_inspect(pid):
     req = generate_markdown(req)
     lic = generate_markdown(lic)
     down = generate_markdown(down)
-    return render_template("product_inspect.htm", user=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic,
+    return render_template("product_inspect.htm", users=users, prodotto=prodotto, css=css, desc=desc, req=req, lic=lic,
                            down=down)
+
+
+@app.route('/blogpost/write/', methods=['GET', 'POST'])
+def page_blogpost_write():
+    if 'username' not in session:
+        return abort(403)
+    utente = find_user(session['username'])
+    if request.method == "GET":
+        return render_template("Amministrazione/Blogposts/blogpost_add.htm", utente=utente)
+    nuovo = Messaggio(datetime.today(), request.form.get('messaggio'))
+    db.session.add(nuovo)
+    db.session.commit()
+    return redirect(url_for("page_amministrazione"))
+
+
+@app.route('/blogpost/edit/<int:mid>', methods=['GET', 'POST'])
+def page_blogpost_edit(mid):
+    if 'username' not in session:
+        return abort(403)
+    messaggio = Messaggio.query.get_or_404(mid)
+    utente = find_user(session['username'])
+    if request.method == "GET":
+        return render_template("Amministrazione/Blogposts/blogpost_add.htm", utente=utente, messaggio=messaggio)
+    messaggio.contenuto = request.form.get('messaggio')
+    db.session.commit()
+    return redirect(url_for("page_blogpost_list"))
+
+
+@app.route('/blogpost/remove/<int:mid>')
+def page_blogpost_remove(mid):
+    if 'username' not in session:
+        return abort(403)
+    messaggio = Messaggio.query.get_or_404(mid)
+    db.session.delete(messaggio)
+    db.session.commit()
+    return redirect(url_for('page_blogpost_list'))
+
+
+@app.route('/blogposts')
+def page_blogpost_list():
+    if 'username' not in session:
+        return abort(403)
+    utente = find_user(session['username'])
+    messaggi = Messaggio.query.all()
+    return render_template("Amministrazione/Blogposts/blogpost_list.htm", utente=utente, messaggi=messaggi)
 
 
 @app.route('/members')
@@ -149,8 +218,8 @@ def page_amministrazione():
         css = url_for("static", filename="style.css")
         return render_template("Amministrazione/amministrazione.htm", css=css, utente=utente)
     else:
-        if login(request.form['username'], request.form['password']):
-            session['username'] = request.form['username']
+        if login(request.form['email'], request.form['password']):
+            session['username'] = request.form['email']
             return redirect(url_for('page_amministrazione'))
         else:
             abort(403)
@@ -173,6 +242,7 @@ def page_product_add():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        print(request.form.get('dbreve'))
         prodotto = Prodotto(request.form['nome'], request.form['destesa'], request.form['dbreve'], str(file.filename))
         db.session.add(prodotto)
         db.session.commit()
@@ -192,6 +262,20 @@ def page_prodotto_del(pid):
     db.session.commit()
     return redirect(url_for('page_prodotti_list'))
 
+
+@app.route('/blogpost/get/<int:upper>')
+def page_blogpost_get(upper):
+    messaggi = Messaggio.query.filter(Messaggio.mid < upper, Messaggio.mid > upper - 10).all()
+    ans = {}
+    for messaggio in messaggi:
+        if messaggio.mid == upper:
+            continue
+        else:
+            ans[messaggio.mid] = {'contenuto': generate_markdown(messaggio.contenuto),
+                                  'data': generate_date(messaggio.data), 'mid': messaggio.mid}
+    return ans
+
+
 @app.route('/prodotto_vetrina/<int:pid>')
 def page_prodotto_vetrina(pid):
     if 'username' not in session:
@@ -200,6 +284,7 @@ def page_prodotto_vetrina(pid):
     prodotto.showcase = not prodotto.showcase
     db.session.commit()
     return redirect(url_for('page_prodotti_list'))
+
 
 @app.route('/prodotti_list')
 def page_prodotti_list():
@@ -230,6 +315,16 @@ def page_prodotto_edit(pid):
         return redirect(url_for('page_prodotti_list'))
 
 
+@app.route('/prodotto/toggle/<int:pid>')
+def page_prodotto_toggle(pid):
+    if 'username' not in session:
+        return abort(403)
+    prodotto = Prodotto.query.get_or_404(pid)
+    prodotto.showcase = not prodotto.showcase
+    db.session.commit()
+    return redirect(url_for('page_prodotti_list'))
+
+
 @app.route("/personale_add", methods=["POST", "GET"])
 def page_personale_add():
     if 'username' not in session:
@@ -239,7 +334,8 @@ def page_personale_add():
         css = url_for("static", filename="style.css")
         return render_template("Amministrazione/Personale/personale_add.htm", css=css, utente=utente)
     else:
-        utente = User(request.form['nome'], request.form['cognome'],request.form['titolo'],request.form['ruolo'], request.form['password'], request.form['email'], request.form['bio'])
+        utente = User(request.form['nome'], request.form['cognome'], request.form['titolo'], request.form['ruolo'],
+                      request.form['password'], request.form['email'], request.form['bio'])
         db.session.add(utente)
         db.session.commit()
         return redirect(url_for('page_amministrazione'))
@@ -265,7 +361,7 @@ def page_personale_del(id):
     return redirect(url_for("page_personale_list"))
 
 
-@app.route("/personale_edit/<int:id>", methods=["POST","GET"])
+@app.route("/personale_edit/<int:id>", methods=["POST", "GET"])
 def page_personale_edit(id):
     if 'username' not in session:
         return abort(403)
@@ -291,9 +387,11 @@ def page_personale_edit(id):
 if __name__ == "__main__":
     # Se non esiste il database viene creato
     if not os.path.isfile("db.sqlite"):
-        utente = User("Lorenzo", "Balugani", "Perito Informatico", "Programmatore", "lorenzo.balugani@gmail.com",
-                      "password", "Marmelle")
+        utente = User("Sgozzoli", "Caione", "Antanizzatore", "Vicesindaco", "lorenzo.balugani@fermitech.info",
+                      "password", "Lei ha clacsonato?")
+        message = Messaggio(datetime.now(), "Il servizio è stato avviato. Ciao mondo!")
         db.create_all()
         db.session.add(utente)
+        db.session.add(message)
         db.session.commit()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
