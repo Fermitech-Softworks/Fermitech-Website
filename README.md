@@ -37,6 +37,20 @@ Fermitech Softworks website written in Python, Jinja2, Javascript and HTML.
    
 ### For production
 
+#### Preparing for production
+
+1. Use `export` to set the required environment variables:
+   ```bash
+   export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
+   ```
+   
+2. Run the `flask` development server. This will create the database:
+   ```
+   python server.py
+   ```
+
+#### Setting up production
+
 
 5. Create the file `/etc/systemd/system/web-erre2.service` with the following contents:
    ```ini
