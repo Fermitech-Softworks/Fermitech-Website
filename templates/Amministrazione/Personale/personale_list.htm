@@ -20,7 +20,7 @@
                 <td>{{ persona.email }}</td>
                 <td>{{ persona.titolo }}</td>
                 <td>{{ persona.ruolo }}</td>
-                <td><a href="/personale_edit/{{ persona.uid }}"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a href="/personale_del/{{ persona.uid }}"><i class="fa fa-ban" aria-hidden="true"></i></a></td>
+                <td><a href="/personale_edit/{{ persona.uid }}"><i class="material-icons">add</i></a> <a href="/personale_del/{{ persona.uid }}"><i class="material-icons">delete</i></a></td>
             </tr>
         {% endfor %}
     </table>

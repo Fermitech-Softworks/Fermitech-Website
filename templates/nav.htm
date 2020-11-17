@@ -1,9 +1,9 @@
 <nav class="default-navbar">
     <div class="nav-wrapper">
-        <a href="/welcome" class="brand-logo">Fermitech Softworks</a>
+        <a class="brand-logo">Fermitech</a>
 
         <ul class="right hide-on-med-and-down ">
-            {% if user is defined %}
+            {% if utente is defined %}
                 <li><a style="background: white; color: #424242; border-radius:5px"
                        href="/">{{ gettext("Logout") }}</a></li>
             {% else %}

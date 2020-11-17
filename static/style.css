@@ -136,3 +136,12 @@ blockquote {
     background-size:100% auto;
     background-repeat: no-repeat;
 }
+@media only screen and (max-width: 760px) {
+  #some-element { display: none; }
+}
+
+.default-footer {
+    color: #fafafa;
+    background-color: #424242;
+    padding: 2rem 2rem;
+}

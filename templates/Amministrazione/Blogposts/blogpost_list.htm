@@ -1,0 +1,19 @@
+{% extends "stampo.htm" %}
+{% block title %}Lista post{% endblock %}
+{% block content %}
+<h3>Lista dei post</h3>
+<table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        {% for messaggio in messaggi %}
+            <tr>
+                <td>{{ messaggio.data }}</td>
+                <td><a href="/blogpost/edit/{{ messaggio.mid }}"><i class="material-icons">add</i></a> <a href="/blogpost/remove/{{ messaggio.mid }}"><i class="material-icons">delete</i></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{%endblock%}
