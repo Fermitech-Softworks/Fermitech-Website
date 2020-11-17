@@ -5,7 +5,7 @@ Fermitech Softworks website written in Python, Jinja2, Javascript and HTML.
 
 1. Clone this repository using `git`:
    ```
-   git clone git@github.com:Fermitech-Softworks/Fermitech-Website.git
+   gh repo clone Fermitech-Softworks/Fermitech-Website
    ```
    
 2. Create a new `venv`:
