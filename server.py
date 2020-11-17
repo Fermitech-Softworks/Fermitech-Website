@@ -1,4 +1,5 @@
 from flask import Flask, session, url_for, redirect, request, render_template, abort, flash, Markup
+import werkzeug
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -9,9 +10,10 @@ from flask_babel import Babel, gettext
 
 app = Flask(__name__)
 babel = Babel(app)
-app.secret_key = "debug-attivo"
+app.secret_key = os.environ["COOKIE_SECRET_KEY"]
 UPLOAD_FOLDER = './static'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'svg'])
+reverse_proxy_app = werkzeug.middleware.proxy_fix.ProxyFix(app=app, x_for=1, x_proto=0, x_host=1, x_port=0, x_prefix=0)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
