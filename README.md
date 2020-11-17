@@ -52,7 +52,7 @@ Fermitech Softworks website written in Python, Jinja2, Javascript and HTML.
 #### Setting up production
 
 
-5. Create the file `/etc/systemd/system/web-erre2.service` with the following contents:
+5. Create the file `/etc/systemd/system/web-fermitech-site.service` with the following contents:
    ```ini
    [Unit]
    Name=web-fermitech-site
